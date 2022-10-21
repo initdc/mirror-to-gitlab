@@ -35,10 +35,10 @@ REPOS = {
     "git@github.com:initdc/check-version.git",
     false
   ],
-  "awesome-go": [
-    "git@github.com:initdc/awesome-go.git",
-    true
-  ],
+  # "awesome-go": [
+  #   "git@github.com:initdc/awesome-go.git",
+  #   true
+  # ],
   # "dnsproxy": [
   #   "git@github.com:initdc/dnsproxy.git",
   #   true
@@ -47,10 +47,10 @@ REPOS = {
   #   "https://github.com/EpicGames/BlenderTools.git",
   #   false
   # ],
-  "linux": [
-    "git@github.com:initdc/linux.git",
-    true
-  ],
+  # "linux": [
+  #   "git@github.com:initdc/linux.git",
+  #   true
+  # ],
   # "Shave-And-A-Haircut": [
   #   "https://github.com/EpicGames/Shave-And-A-Haircut.git",
   #   false
@@ -211,10 +211,10 @@ REPOS = {
     "git@github.com:initdc/blog.git",
     false
   ],
-  "sipeed_wiki": [
-    "git@github.com:initdc/sipeed_wiki.git",
-    true
-  ],
+  # "sipeed_wiki": [
+  #   "git@github.com:initdc/sipeed_wiki.git",
+  #   true
+  # ],
   "marspc-vitepress": [
     "git@github.com:initdc/marspc-vitepress.git",
     false
@@ -303,10 +303,10 @@ REPOS = {
     "git@github.com:initdc/dash-ui.git",
     false
   ],
-  "debian": [
-    "git@github.com:initdc/debian.git",
-    true
-  ],
+  # "debian": [
+  #   "git@github.com:initdc/debian.git",
+  #   true
+  # ],
   "smart-ui": [
     "git@github.com:initdc/smart-ui.git",
     false

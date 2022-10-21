@@ -33,6 +33,7 @@ FETCH_CMD = "git fetch"
 ADD_URL_CMD = "git remote add"
 SET_URL_CMD = "git remote set-url"
 PUSH_CMD = "git push --no-verify --mirror"
+LFS_PUSH_CMD = "git lfs push"
 
 WORKDIR = "workdir"
 `mkdir -p #{WORKDIR}`
@@ -68,21 +69,20 @@ Dir.chdir WORKDIR do
         ssh_url = data[0]
         is_fork = data[1]
 
-        gl_url = replace_url ssh_url, "#{GITHUB_SSH}:#{GITHUB_USER}", "#{GITLAB_SSH}:#{GITLAB_USER}"
+        gl_url = replace_url ssh_url, "#{GITHUB_SSH}:#{GITHUB_USER}", "#{JIHULAB_SSH}:#{JIHULAB_USER}"
         if not gl_url.nil?
             puts gl_url
             if not dir_exist? dir
                 catch_run "#{CLONE_CMD} #{ssh_url} #{dir}"
                 Dir.chdir dir do
-                    catch_run "#{ADD_URL_CMD} #{GITLAB} #{gl_url}"
-                    catch_run "#{PUSH_CMD} #{GITLAB}"
+                    catch_run "#{ADD_URL_CMD} #{JIHULAB} #{gl_url}"
+                    catch_run "#{PUSH_CMD} #{JIHULAB}"
                 end
             else
                 Dir.chdir dir do
-                    catch_run "#{SET_URL_CMD} #{ORIGIN} #{ssh_url}"
                     catch_run "#{FETCH_CMD} #{ORIGIN}"
-                    catch_run "#{SET_URL_CMD} #{GITLAB} #{gl_url}"
-                    catch_run "#{PUSH_CMD} #{GITLAB}"
+                    catch_run "#{ADD_URL_CMD} #{JIHULAB} #{gl_url}"
+                    catch_run "#{PUSH_CMD} #{JIHULAB}"
                 end
             end
         end
