@@ -4,8 +4,5 @@ Host github.com
 Host gitlab.com
   IdentityFile ~/.ssh/id_ed25519_gitlab
 
-Host jihulab.com
-  IdentityFile ~/.ssh/id_ed25519_jihulab
-
 Host bitbucket.org
   IdentityFile ~/.ssh/id_ed25519_bitbucket
