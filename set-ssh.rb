@@ -1,54 +1,56 @@
-GITHUB = 'github'
-GITLAB = 'gitlab'
-BITBUCKET = 'bitbucket'
+# frozen_string_literal: true
 
-def ssh_config
-  `mkdir -p ~/.ssh`
+SSH_DIR = "#{Dir.home}/.ssh"
+CONFIG = "#{Dir.home}/.ssh/config"
 
-  config = 'Host github.com
-  IdentityFile ~/.ssh/id_ed25519_github
+GIT_HOSTS = %w[
+  gitea.com
+  codeberg.org
 
-Host gitlab.com
-  IdentityFile ~/.ssh/id_ed25519_gitlab
+  gitlab.com
+  salsa.debian.org
 
-Host bitbucket.org
-  IdentityFile ~/.ssh/id_ed25519_bitbucket'
+  github.com
+  bitbucket.org
+  git.code.sf.net
+  ssh.dev.azure.com
+].freeze
 
-  `echo > ~/.ssh/config '#{config}'`
+def gen_sshkey(host, type = "ed25519", quiet: true)
+  suffix = host.gsub(".", "-")
+  keyfile = "#{Dir.home}/.ssh/id_#{type}_#{suffix}"
+  pubfile = "#{Dir.home}/.ssh/id_#{type}_#{suffix}.pub"
+
+  if File.exist?(keyfile)
+    quiet = false
+  end
+
+  cmd = "ssh-keygen -t #{type} -f #{keyfile} -P ''"
+  if type == "rsa"
+    cmd = "ssh-keygen -t #{type} -b 4096 -f #{keyfile} -P ''"
+  end
+
+  puts cmd
+  quiet ? %x(#{cmd}) : system(cmd)
+
+  File.open(CONFIG, "a+") do |f|
+    f.write "Host #{host}\n  IdentityFile #{keyfile}\n\n"
+  end
+
+  puts "------  #{pubfile}"
+  puts File.read(pubfile)
+  puts "------"
+  puts
 end
 
-def gen_key(suffix, type, *opt)
-  bit = opt[0] || 4096
-  passphrase = opt[1] || ''
-  comment = opt[2]
+if !Dir.exist?(SSH_DIR)
+  Dir.mkdir(SSH_DIR)
+end
 
-  types = %w[dsa ecdsa ecdsa-sk ed25519 ed25519-sk rsa]
-  if types.include? type
-    keyfile = "~/.ssh/id_#{type}_#{suffix}"
-    pubfile = "~/.ssh/id_#{type}_#{suffix}.pub"
-
-    cmd = "ssh-keygen -t #{type} -f #{keyfile} -P '#{passphrase}'"
-    cmd = "ssh-keygen -t #{type} -b #{bit} -f #{keyfile} -P '#{passphrase}'" if type == 'rsa'
-
-    cmd += " -C #{comment}" unless comment.nil?
-
-    puts cmd
-    system cmd
-
-    cmd = "cat #{pubfile}"
-    puts "------  #{pubfile}"
-    IO.popen(cmd) do |r|
-      puts r.readlines
-    end
-    puts '------'
+GIT_HOSTS.each do |host|
+  if host != "ssh.dev.azure.com"
+    gen_sshkey(host)
   else
-    print 'wrong type: '
-    p type
+    gen_sshkey(host, "rsa")
   end
 end
-
-ssh_config
-
-gen_key GITHUB, 'ed25519'
-gen_key GITLAB, 'ed25519'
-gen_key BITBUCKET, 'ed25519'
