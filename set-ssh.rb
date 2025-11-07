@@ -10,6 +10,7 @@ GIT_HOSTS = %w[
   gitlab.com
   salsa.debian.org
 
+  tangled.sh
   github.com
   bitbucket.org
   git.code.sf.net
@@ -54,3 +55,5 @@ GIT_HOSTS.each do |host|
     gen_sshkey(host, "rsa")
   end
 end
+
+# gen_sshkey(GIT_HOSTS[4])

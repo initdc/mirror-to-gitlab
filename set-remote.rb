@@ -7,6 +7,8 @@ ALIAS_SSH_URL = {
   lab: "git@gitlab.com:initdc/{repo}.git",
   deb: "git@salsa.debian.org:o9/{repo}.git",
 
+
+  tngl: "git@tangled.sh:initd.tngl.sh/{repo}",
   hub: "git@github.com:initdc/{repo}.git",
   bit: "git@bitbucket.org:initdc/{repo}.git",
   # sf: "ssh://initd@git.code.sf.net/p/hello-sourceforge/code",
