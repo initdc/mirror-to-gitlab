@@ -15,6 +15,8 @@ GIT_HOSTS = %w[
   bitbucket.org
   git.code.sf.net
   ssh.dev.azure.com
+
+  hf.co
 ].freeze
 
 def gen_sshkey(host, type = "ed25519", quiet: true)
@@ -22,7 +24,8 @@ def gen_sshkey(host, type = "ed25519", quiet: true)
   keyfile = "#{Dir.home}/.ssh/id_#{type}_#{suffix}"
   pubfile = "#{Dir.home}/.ssh/id_#{type}_#{suffix}.pub"
 
-  if File.exist?(keyfile)
+  already = File.exist?(keyfile)
+  if already
     quiet = false
   end
 
@@ -35,7 +38,9 @@ def gen_sshkey(host, type = "ed25519", quiet: true)
   quiet ? %x(#{cmd}) : system(cmd)
 
   File.open(CONFIG, "a+") do |f|
-    f.write "Host #{host}\n  IdentityFile #{keyfile}\n\n"
+    if !already
+      f.write "Host #{host}\n  IdentityFile #{keyfile}\n\n"
+    end
   end
 
   puts "------  #{pubfile}"

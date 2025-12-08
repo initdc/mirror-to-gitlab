@@ -9,6 +9,7 @@ ALIAS_SSH_URL = {
 
 
   tngl: "git@tangled.sh:initd.tngl.sh/{repo}",
+  bsky: "git@tangled.sh:initd.bsky.social/{repo}",
   hub: "git@github.com:initdc/{repo}.git",
   bit: "git@bitbucket.org:initdc/{repo}.git",
   # sf: "ssh://initd@git.code.sf.net/p/hello-sourceforge/code",
