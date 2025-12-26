@@ -1,31 +1,22 @@
+# frozen_string_literal: true
+
+require "cr"
 require "./data/repos"
 
-# origin
-ORIGIN = "origin"
-UPSTREAM = "upstream"
+ALIAS_SSH_URL = {
+  tea: "git@gitea.com:initd/{repo}.git",
+  berg: "ssh://git@codeberg.org/initd/{repo}.git",
 
-GITHUB = "github"
-GITLAB = "gitlab"
-JIHULAB = "jihulab"
-BITBUCKET = "bitbucket"
+  lab: "git@gitlab.com:initdc/{repo}.git",
+  # deb: "git@salsa.debian.org:o9/{repo}.git",
 
-# ssh
-GITHUB_SSH = "git@github.com"
-GITLAB_SSH = "git@gitlab.com"
-JIHULAB_SSH = "git@jihulab.com"
-BITBUCKET_SSH = "git@bitbucket.org"
-
-# user
-GITHUB_USER = "initdc"
-GITLAB_USER = "initdc"
-JIHULAB_USER = "fi"
-BITBUCKET_USER = "initdc"
-
-# https
-GITHUB_HTTPS = "https://github.com"
-GITLAB_HTTPS = "https://gitlab.com"
-JIHULAB_HTTPS = "https://jihulab.com"
-BITBUCKET_HTTPS = "https://#{BITBUCKET_USER}@bitbucket.org"
+  # tngl: "git@tangled.sh:initd.tngl.sh/{repo}",
+  # bsky: "git@tangled.sh:initd.bsky.social/{repo}",
+  # bit: "git@bitbucket.org:initdc/{repo}.git"
+  # hub: "git@github.com:initdc/{repo}.git",
+  # sf: "ssh://initd@git.code.sf.net/p/hello-sourceforge/code",
+  # az: "git@ssh.dev.azure.com:v3/asia-pacific/proj/proj"
+}.freeze
 
 # cmds
 CLONE_CMD = "git clone --mirror"
@@ -35,56 +26,45 @@ SET_URL_CMD = "git remote set-url"
 PUSH_CMD = "git push --no-verify --mirror"
 
 WORKDIR = "workdir"
-`mkdir -p #{WORKDIR}`
+%x(mkdir -p #{WORKDIR})
 
-def replace_url url, old_str, new_str
-    if url.include? old_str
-        return url.sub old_str, new_str
-    else
-        print "url not include: "
-        p old_str
-        return nil
-    end
+def ps(cmd)
+  puts cmd
+  Cr.answer("bash", "r+", input: cmd)
 end
 
-def dir_exist? dir
-    if system "test -d #{dir}"
-        return true
-    else
-        return false
-    end
-end
+load_x = ". $HOME/.x-cmd.root/X\n"
 
-def catch_run cmd
-    result = system cmd
-    if not result
-        return
+Dir.chdir(WORKDIR) do
+  REPOS.each do |name, data|
+    is_fork = data[1]
+    if is_fork
+      next
     end
-end
 
-Dir.chdir WORKDIR do
-    REPOS.each do | name, data |
-        dir = "#{name}"
-        ssh_url = data[0]
-        is_fork = data[1]
+    dir = name.to_s
+    ssh_url = data[0]
 
-        gl_url = replace_url ssh_url, "#{GITHUB_SSH}:#{GITHUB_USER}", "#{GITLAB_SSH}:#{GITLAB_USER}"
-        if not gl_url.nil?
-            puts gl_url
-            if not dir_exist? dir
-                catch_run "#{CLONE_CMD} #{ssh_url} #{dir}"
-                Dir.chdir dir do
-                    catch_run "#{ADD_URL_CMD} #{GITLAB} #{gl_url}"
-                    catch_run "#{PUSH_CMD} #{GITLAB}"
-                end
-            else
-                Dir.chdir dir do
-                    catch_run "#{SET_URL_CMD} #{ORIGIN} #{ssh_url}"
-                    catch_run "#{FETCH_CMD} #{ORIGIN}"
-                    catch_run "#{SET_URL_CMD} #{GITLAB} #{gl_url}"
-                    catch_run "#{PUSH_CMD} #{GITLAB}"
-                end
-            end
-        end
+    if !Dir.exist?(dir)
+      ps "#{CLONE_CMD} #{ssh_url} #{dir}"
     end
+
+    Dir.chdir(dir) do
+      ps "#{load_x} x tea repo create #{dir}"
+      ps "#{load_x} x cb repo create #{dir}"
+
+      ALIAS_SSH_URL.each do |as, url|
+        puts "----Runing for #{as} ---"
+        url = url.sub("{repo}", dir)
+        ps "git remote remove #{as}"
+        ps "git remote add #{as} #{url}"
+        ps "#{PUSH_CMD} #{as} -f"
+        puts "------------------------"
+        puts
+      end
+    end
+
+    # VPS disk space is limited
+    system("rm -rf #{dir}")
+  end
 end

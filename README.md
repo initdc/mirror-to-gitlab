@@ -2,42 +2,56 @@
 
 Mirror and place your codebase to other providers
 
-# Use
+## prepare
 
-1. Gen ssh keys
+  1. create token with `RW` to `[repository, user]`
+
+  - https://gitea.com/user/settings/applications
+  - https://codeberg.org/user/settings/applications
+
+  2. install deps
+
+  ```sh
+  # for creating repo
+  eval "$(curl https://get.x-cmd.com)"
+  x cb init
+  x tea init
+
+  # for exec x-cmd
+  gem install cr-exec
+  ```
+
+## mirror
+
+  1. Gen ssh keys
 
   ```sh
   ruby set-ssh.rb
   ```
 
-2. Add your public keys
+  2. Add your public keys for git clone ssh://
 
-- <https://gitea.com/user/settings/keys>
-- <https://codeberg.org/user/settings/keys>
-- <https://gitlab.com/-/user_settings/ssh_keys>
-- <https://salsa.debian.org/-/user_settings/ssh_keys>
-- <https://github.com/settings/keys>
-- <https://bitbucket.org/account/settings/ssh-keys/>
+  - https://github.com/settings/keys
+  - https://gitlab.com/-/user_settings/ssh_keys
+  - https://gitea.com/user/settings/keys
+  - https://codeberg.org/user/settings/keys
+  - https://bitbucket.org/account/settings/ssh-keys/
 
-3. You need create repo manually for those providers which is not gitlab instance
+  3. edit your username `ALIAS_SSH_URL` in file push-mirror.rb
 
-- <https://gitea.com/repo/create>
-- <https://codeberg.org/repo/create>
-- <https://github.com/new>
+  ```sh
+  OCTOKIT_ACCESS_TOKEN=ghp_xxx USER=initdc ruby get-data.rb
+  ruby push-mirror.rb
+  ```
 
-  or you can write your logic of creating repos
-  
-- cli
-  - <https://gitea.com/gitea/tea>
-  - <https://www.x-cmd.com/mod/cb/>
-  - <https://github.com/cli/cli>
+## daily use 
 
-4. edit your username or maybe project name in `ALIAS_SSH_URL`
+  pushing with no bare repo
 
   ```sh
   ruby set-remote.rb
   ```
 
-# License
+## License
 
 GPL-2.0

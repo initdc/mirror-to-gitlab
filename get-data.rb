@@ -1,37 +1,35 @@
-require 'octokit'
-require 'json'
+# frozen_string_literal: true
 
-require './lib/conv'
-require './lib/write'
+require "json"
+require "octokit"
 
-require './secret'
+require "./lib/conv"
+require "./lib/write"
+
+# require './secret'
 # GHP = ''
 # USER = ''
 
 DATA_DIR = "data"
-`mkdir -p #{DATA_DIR}`
+%x(mkdir -p #{DATA_DIR})
 
-personal_access_token =  ENV['GHP'] || GHP
-user_name = ENV['USER'] || USER
-
-client = Octokit::Client.new(:access_token => personal_access_token)
+# OCTOKIT_ACCESS_TOKEN
+client = Octokit::Client.new
 # client = Octokit::Client.new(:login => 'defunkt', :password => 'personal_access_token')
-# client.auto_paginate = true
+client.auto_paginate = true
 
-user = client.user user_name
-
-repos = client.repos({}, query: {type: 'all', sort: 'pushed'})
-puts repos[0].fields
-puts repos[0].ssh_url
+repos = client.repos(ENV.fetch("USER", "initdc"), query: { type: "all", sort: "pushed" })
+# puts repos[0].fields
+# puts repos[0].ssh_url
 
 # repo0 = conv_key_val repos[0], :name, :clone_url
 # pertty0 = JSON.pretty_generate(repo0)
 # puts pertty0
 
-# repos_json = objs_conv_key_vals repos, :name, [:ssh_url, :fork]
-# pretty_write "REPOS", repos_json, "data/repos_1.rb"
+repos_json = objs_conv_key_vals(repos, :name, [:ssh_url, :fork])
+pretty_write "REPOS", repos_json, "data/repos.rb"
 
-puts repos.length
+puts repos.size
 
 # gists = client.gists
 # gists.each do |gist|

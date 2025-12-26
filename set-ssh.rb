@@ -39,7 +39,7 @@ def gen_sshkey(host, type = "ed25519", quiet: true)
 
   File.open(CONFIG, "a+") do |f|
     if !already
-      f.write "Host #{host}\n  IdentityFile #{keyfile}\n\n"
+      f.write("Host #{host}\n  IdentityFile #{keyfile}\n\n")
     end
   end
 
