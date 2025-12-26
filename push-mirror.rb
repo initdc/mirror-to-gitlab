@@ -50,8 +50,8 @@ Dir.chdir(WORKDIR) do
     end
 
     Dir.chdir(dir) do
-      ps "#{load_x} x tea repo create #{dir}"
-      ps "#{load_x} x cb repo create #{dir}"
+      ps "#{load_x} x tea repo create --access public #{dir}"
+      ps "#{load_x} x cb repo create --access public #{dir}"
 
       ALIAS_SSH_URL.each do |as, url|
         puts "----Runing for #{as} ---"

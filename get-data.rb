@@ -18,7 +18,7 @@ client = Octokit::Client.new
 # client = Octokit::Client.new(:login => 'defunkt', :password => 'personal_access_token')
 client.auto_paginate = true
 
-repos = client.repos(ENV.fetch("USER", "initdc"), query: { type: "all", sort: "pushed" })
+repos = client.repos("initdc", query: { type: "all", sort: "pushed" })
 # puts repos[0].fields
 # puts repos[0].ssh_url
 
