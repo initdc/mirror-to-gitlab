@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 ALIAS_SSH_URL = {
@@ -27,7 +28,7 @@ ALIAS_SSH_URL.each do |as, url|
   url = url.sub("{repo}", REPO)
   ps "git remote remove #{as}"
   ps "git remote add #{as} #{url}"
-  ps "git push #{as} master -f"
+  ps "git push #{as} --all -f"
   puts "------------------------"
   puts
 end

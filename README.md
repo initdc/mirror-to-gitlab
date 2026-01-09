@@ -49,7 +49,8 @@ Mirror and place your codebase to other providers
   pushing with no bare repo
 
   ```sh
-  ruby set-remote.rb
+  ln set-remote.rb ~/bin/set-remote.rb
+  set-remote.rb
   ```
 
 ## License

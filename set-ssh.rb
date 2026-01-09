@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 SSH_DIR = "#{Dir.home}/.ssh"
